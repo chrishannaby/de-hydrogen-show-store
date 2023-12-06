@@ -18,8 +18,9 @@ export async function loader({context}) {
   const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY);
   const featuredCollection = collections.nodes[0];
   const recommendedProducts = storefront.query(RECOMMENDED_PRODUCTS_QUERY);
+  const heroImage = '/images/hero.png';
 
-  return defer({featuredCollection, recommendedProducts});
+  return defer({featuredCollection, recommendedProducts, heroImage});
 }
 
 export default function Homepage() {
@@ -27,8 +28,20 @@ export default function Homepage() {
   const data = useLoaderData();
   return (
     <div className="home">
+      <Hero heroImage={data.heroImage} />
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
+    </div>
+  );
+}
+
+/**
+ *
+ */
+function Hero({heroImage}) {
+  return (
+    <div className="">
+      <img src={heroImage} alt="hero" className="w-full h-auto"></img>
     </div>
   );
 }

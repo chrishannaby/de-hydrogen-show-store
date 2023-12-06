@@ -8,7 +8,7 @@ import {useRootLoaderData} from '~/root';
 export function Header({header, isLoggedIn, cart}) {
   const {shop, menu} = header;
   return (
-    <header className="flex justify-between px-32 py-6 placeholde">
+    <header className="flex justify-between px-32 py-6 items-center">
       <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
         <span className="flex justify-center">
           <svg
