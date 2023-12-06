@@ -12,12 +12,21 @@ import {
 /**
  * @param {LayoutProps}
  */
-export function Layout({cart, children = null, footer, header, isLoggedIn}) {
+export function Layout({
+  cart,
+  children = null,
+  footer,
+  header,
+  isLoggedIn,
+  message,
+  showMessageBar,
+}) {
   return (
     <>
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside menu={header.menu} shop={header.shop} />
+      <MessageBar showMessageBar={showMessageBar} message={message} />
       <Header header={header} cart={cart} isLoggedIn={isLoggedIn} />
       <main>{children}</main>
       <Suspense>
@@ -70,6 +79,24 @@ function SearchAside() {
         <PredictiveSearchResults />
       </div>
     </Aside>
+  );
+}
+
+/**
+ *
+ */
+function MessageBar({showMessageBar, message}) {
+  if (!showMessageBar) {
+    return null;
+  }
+
+  return (
+    <div className="bg-darkGray text-white p-4 text-center">
+      {message}{' '}
+      <a href="#" className="underline">
+        Shop now
+      </a>
+    </div>
   );
 }
 
