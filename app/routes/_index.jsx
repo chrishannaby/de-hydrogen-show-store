@@ -15,16 +15,38 @@ export const meta = () => {
  */
 export async function loader({context}) {
   const {storefront} = context;
-  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY, {
+  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY);
+
+  const featuredCollection = collections.nodes[0];
+  const recommendedProducts = await storefront.query(
+    COLLECTION_PRODUCTS_QUERY,
+    {
+      variables: {
+        query: 'title:Bestsellers',
+      },
+    },
+  );
+  const productList2 = await storefront.query(COLLECTION_PRODUCTS_QUERY, {
     variables: {
-      query: 'title:Bestsellers',
+      query: 'title:Beauty',
     },
   });
-  const featuredCollection = collections.nodes[0];
-  const recommendedProducts = await storefront.query(COLLECTION_PRODUCTS_QUERY);
+
+  const productList3 = await storefront.query(COLLECTION_PRODUCTS_QUERY, {
+    variables: {
+      query: 'title:Apparel',
+    },
+  });
+
   const heroImage = '/images/hero.png';
 
-  return defer({featuredCollection, recommendedProducts, heroImage});
+  return defer({
+    featuredCollection,
+    recommendedProducts,
+    productList2,
+    productList3,
+    heroImage,
+  });
 }
 
 export default function Homepage() {
@@ -37,6 +59,22 @@ export default function Homepage() {
       <div className="px-32 py-20">
         <CollectionProductGrid
           products={data.recommendedProducts.collections.edges[0].node}
+        />
+
+        <CollectionProductGridWithImage
+          products={data.productList2.collections.edges[0].node}
+          image="/images/sale_image.webp"
+          sectionTitle="Beauty"
+          sectionHeading="Shop all beauty products"
+        />
+
+        <CollectionCTASection />
+
+        <CollectionProductGridWithImage
+          products={data.productList3.collections.edges[0].node}
+          image="/images/summer-collection.webp"
+          sectionTitle="Apparel"
+          sectionHeading="Shop all beauty products"
         />
       </div>
     </div>
@@ -57,7 +95,7 @@ function Hero({heroImage}) {
 function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
   return (
     <>
-      <h2 className="text-2xl font-bold">{sectionName}</h2>
+      <h2 className="text-2xl font-bold uppercase">{sectionName}</h2>
       <div>
         <Link
           className="flex items-center space-x-1"
@@ -125,6 +163,94 @@ function CollectionProductGrid({products}) {
           )}
         </Await>
       </Suspense>
+      <br />
+    </div>
+  );
+}
+
+/**
+ * @param {{
+ *   products: Promise<RecommendedProductsQuery>;
+ * }}
+ */
+function CollectionCTASection({collectionHandle}) {
+  return (
+    <div className="grid grid-cols-12 space-x-12 pt-16">
+      <div className="col-span-4 space-y-2">
+        <h3 className="text-2xl font-bold uppercase">Electronics</h3>
+        <p className="text-sm font-light">
+          Are you tired of running out of battery on the go? Anker offers a
+          fantastic range of powerful and innovative portable power banks that
+          will supercharge your charging experience.
+        </p>
+        <div className="pt-4">
+          <button
+            type="button"
+            className="rounded-full bg-darkGray px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Shop electronics
+          </button>
+        </div>
+      </div>
+      <div className="col-span-8">
+        <img src="/images/electronics.png" alt="electronics" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * @param {{
+ *   products: Promise<RecommendedProductsQuery>;
+ * }}
+ */
+function CollectionProductGridWithImage({
+  products,
+  sectionTitle,
+  sectionHeading,
+  image,
+}) {
+  return (
+    <div className="recommended-products">
+      <CollectionHeading
+        sectionName={sectionTitle}
+        sectionHeading={sectionHeading}
+        collectionHandle={products.handle}
+      />
+      <div className="grid grid-cols-12 space-x-12 pt-8">
+        <div className="col-span-8 ">
+          <img className="w-full h-auto" src={image} alt="beauty" />
+        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Await resolve={products}>
+            {({products}) => (
+              <div className="col-span-4 gap-y-12 grid">
+                {products.nodes.map((product) => (
+                  <Link
+                    key={product.id}
+                    className="recommended-product"
+                    to={`/products/${product.handle}`}
+                  >
+                    <Image
+                      data={product.images.nodes[0]}
+                      aspectRatio="1/1"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                    <h3 className="font-semibold text-lg pt-4">
+                      {product.vendor}
+                    </h3>
+                    <h4 className="text-sm">{product.title}</h4>
+                    <small>
+                      <Money data={product.priceRange.minVariantPrice} />
+                    </small>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </Await>
+        </Suspense>
+      </div>
+
       <br />
     </div>
   );
