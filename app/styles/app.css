@@ -181,7 +181,7 @@ aside li {
 * --------------------------------------------------
 */
 .footer {
-  background: var(--color-dark);
+  /*background: var(--color-dark);*/
   margin-top: auto;
 }
 
@@ -198,7 +198,7 @@ aside li {
 }
 
 .footer-menu a {
-  color: var(--color-light);
+  /*color: var(--color-light);*/
 }
 
 /*
