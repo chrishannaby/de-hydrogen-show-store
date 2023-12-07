@@ -15,9 +15,13 @@ export const meta = () => {
  */
 export async function loader({context}) {
   const {storefront} = context;
-  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY);
+  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY, {
+    variables: {
+      query: 'title:Bestsellers',
+    },
+  });
   const featuredCollection = collections.nodes[0];
-  const recommendedProducts = await storefront.query(PRODUCTS_QUERY);
+  const recommendedProducts = await storefront.query(COLLECTION_PRODUCTS_QUERY);
   const heroImage = '/images/hero.png';
 
   return defer({featuredCollection, recommendedProducts, heroImage});
@@ -31,7 +35,7 @@ export default function Homepage() {
       <Hero heroImage={data.heroImage} />
       {/* <FeaturedCollection collection={data.featuredCollection} /> */}
       <div className="px-32 py-20">
-        <RecommendedProducts
+        <CollectionProductGrid
           products={data.recommendedProducts.collections.edges[0].node}
         />
       </div>
@@ -50,42 +54,16 @@ function Hero({heroImage}) {
   );
 }
 
-/**
- * @param {{
- *   collection: FeaturedCollectionFragment;
- * }}
- */
-function FeaturedCollection({collection}) {
-  if (!collection) return null;
-  const image = collection?.image;
+function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
-        </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
-  );
-}
-
-/**
- * @param {{
- *   products: Promise<RecommendedProductsQuery>;
- * }}
- */
-function RecommendedProducts({products}) {
-  console.log(products)
-  return (
-    <div className="recommended-products">
-      <h2 className="text-2xl font-bold">OUR BEST SELLERS</h2>
+    <>
+      <h2 className="text-2xl font-bold">{sectionName}</h2>
       <div>
-        <a href="/" className="flex  items-center space-x-1">
-          <div className="font-light text-sm"> Shop our top picks </div>
+        <Link
+          className="flex items-center space-x-1"
+          to={`/collections/${collectionHandle}`}
+        >
+          <div className="font-light text-sm"> {sectionHeading} </div>
           <div>
             <svg
               width="12"
@@ -100,8 +78,25 @@ function RecommendedProducts({products}) {
               />
             </svg>
           </div>
-        </a>
+        </Link>
       </div>
+    </>
+  );
+}
+
+/**
+ * @param {{
+ *   products: Promise<RecommendedProductsQuery>;
+ * }}
+ */
+function CollectionProductGrid({products}) {
+  return (
+    <div className="recommended-products">
+      <CollectionHeading
+        sectionName={'OUR BEST SELLERS'}
+        sectionHeading={'Shop our top picks'}
+        collectionHandle={products.handle}
+      />
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {({products}) => (
@@ -117,7 +112,9 @@ function RecommendedProducts({products}) {
                     aspectRatio="1/1"
                     sizes="(min-width: 45em) 20vw, 50vw"
                   />
-                  <h3 className="font-semibold text-lg pt-4">{product.vendor}</h3>
+                  <h3 className="font-semibold text-lg pt-4">
+                    {product.vendor}
+                  </h3>
                   <h4 className="text-sm">{product.title}</h4>
                   <small>
                     <Money data={product.priceRange.minVariantPrice} />
@@ -188,12 +185,15 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   }
 `;
 
-const PRODUCTS_QUERY = `#graphql
-query {
-  collections(first: 5,  query: "title:Bestsellers") {
+const COLLECTION_PRODUCTS_QUERY = `#graphql
+query COLLECTION(
+  $query: String
+){
+  collections(first: 5,  query: $query) {
     edges {
       node {
         title
+        handle
         products(first: 8) {
           nodes {
                 id
