@@ -22,33 +22,56 @@ function FooterMenu({menu, primaryDomainUrl}) {
   const {publicStoreDomain} = useRootLoaderData();
 
   return (
-    <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-            {item.title}
-          </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
+    <nav className="px-32 text-darkGray" role="navigation">
+      <div className="grid grid-cols-3 gap-4">
+        <h3 className="uppercase font-bold">Quick Links</h3>
+        <h3 className="font-bold">Info</h3>
+        <h3 className="font-bold">Our Mission</h3>
+      </div>
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-2 col-span-2 gap-4">
+          {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+            if (!item.url) return null;
+            // if the url is internal, we strip the domain
+            const url =
+              item.url.includes('myshopify.com') ||
+              item.url.includes(publicStoreDomain) ||
+              item.url.includes(primaryDomainUrl)
+                ? new URL(item.url).pathname
+                : item.url;
+            const isExternal = !url.startsWith('/');
+            return isExternal ? (
+              <a
+                href={url}
+                key={item.id}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {item.title}
+              </a>
+            ) : (
+              <NavLink
+                end
+                key={item.id}
+                prefetch="intent"
+                className="text-darkyGray font-light text-sm"
+                style={activeLinkStyle}
+                to={url}
+              >
+                {item.title}
+              </NavLink>
+            );
+          })}
+        </div>
+        <p className="text-black font-light text-sm">
+          MR PORTER’s Mission is to help men lead stylish, happy and fulfilling
+          lives. As a modern and truly global business, we recognise that these
+          goals come with responsibilities. So, Our Pledge – built on the
+          pillars of Community, Experience and Product – is made to the people
+          who shop, work and spend time with us. It is also made to the planet
+          we all live on.
+        </p>
+      </div>
     </nav>
   );
 }
@@ -104,7 +127,7 @@ const FALLBACK_FOOTER_MENU = {
 function activeLinkStyle({isActive, isPending}) {
   return {
     fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
+    color: isPending ? 'grey' : 'black',
   };
 }
 
