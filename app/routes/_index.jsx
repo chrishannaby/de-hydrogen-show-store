@@ -70,12 +70,14 @@ export default function Homepage() {
 
         <CollectionCTASection />
 
-        <CollectionProductGridWithImage
-          products={data.productList3.collections.edges[0].node}
-          image="/images/summer-collection.webp"
-          sectionTitle="Apparel"
-          sectionHeading="Shop all beauty products"
-        />
+        <div className="pt-24">
+          <CollectionProductGridWithImage
+            products={data.productList3.collections.edges[0].node}
+            image="/images/summer-collection.webp"
+            sectionTitle="Apparel"
+            sectionHeading="Shop all beauty products"
+          />
+        </div>
       </div>
     </div>
   );
@@ -128,6 +130,7 @@ function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
  * }}
  */
 function CollectionProductGrid({products}) {
+  console.log(products)
   return (
     <div className="recommended-products">
       <CollectionHeading
@@ -326,6 +329,7 @@ query COLLECTION(
                 title
                 productType  
                 vendor 
+                handle
                 priceRange {
                   minVariantPrice {
                     amount

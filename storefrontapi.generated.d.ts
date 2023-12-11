@@ -233,7 +233,7 @@ export type CollectionQuery = {
           nodes: Array<
             Pick<
               StorefrontAPI.Product,
-              'id' | 'title' | 'productType' | 'vendor'
+              'id' | 'title' | 'productType' | 'vendor' | 'handle'
             > & {
               priceRange: {
                 minVariantPrice: Pick<
@@ -1851,7 +1851,7 @@ interface GeneratedQueryTypes {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
   };
-  '#graphql\nquery COLLECTION(\n  $query: String\n){\n  collections(first: 5,  query: $query) {\n    edges {\n      node {\n        title\n        handle\n        products(first: 8) {\n          nodes {\n                id\n                title\n                productType  \n                vendor \n                priceRange {\n                  minVariantPrice {\n                    amount\n                    currencyCode\n                  }\n                }\n                images(first: 1) {\n                  nodes {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                }\n          }\n        }\n      }\n    }\n  }\n}\n': {
+  '#graphql\nquery COLLECTION(\n  $query: String\n){\n  collections(first: 5,  query: $query) {\n    edges {\n      node {\n        title\n        handle\n        products(first: 8) {\n          nodes {\n                id\n                title\n                productType  \n                vendor \n                handle\n                priceRange {\n                  minVariantPrice {\n                    amount\n                    currencyCode\n                  }\n                }\n                images(first: 1) {\n                  nodes {\n                    id\n                    url\n                    altText\n                    width\n                    height\n                  }\n                }\n          }\n        }\n      }\n    }\n  }\n}\n': {
     return: COLLECTIONQuery;
     variables: COLLECTIONQueryVariables;
   };
