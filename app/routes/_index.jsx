@@ -70,12 +70,14 @@ export default function Homepage() {
 
         <CollectionCTASection />
 
-        <CollectionProductGridWithImage
-          products={data.productList3.collections.edges[0].node}
-          image="/images/summer-collection.webp"
-          sectionTitle="Apparel"
-          sectionHeading="Shop all beauty products"
-        />
+        <div className="pt-24">
+          <CollectionProductGridWithImage
+            products={data.productList3.collections.edges[0].node}
+            image="/images/summer-collection.webp"
+            sectionTitle="Apparel"
+            sectionHeading="Shop all beauty products"
+          />
+        </div>
       </div>
     </div>
   );
@@ -127,14 +129,17 @@ function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
  *   products: Promise<RecommendedProductsQuery>;
  * }}
  */
-function CollectionProductGrid({products}) {
+export function CollectionProductGrid({products, showHeader = true}) {
   return (
     <div className="recommended-products">
-      <CollectionHeading
-        sectionName={'OUR BEST SELLERS'}
-        sectionHeading={'Shop our top picks'}
-        collectionHandle={products.handle}
-      />
+      {showHeader && (
+        <CollectionHeading
+          sectionName={'OUR BEST SELLERS'}
+          sectionHeading={'Shop our top picks'}
+          collectionHandle={products.handle}
+        />
+      )}
+
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {({products}) => (
@@ -326,6 +331,7 @@ query COLLECTION(
                 title
                 productType  
                 vendor 
+                handle
                 priceRange {
                   minVariantPrice {
                     amount
