@@ -129,15 +129,17 @@ function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
  *   products: Promise<RecommendedProductsQuery>;
  * }}
  */
-function CollectionProductGrid({products}) {
-  console.log(products)
+export function CollectionProductGrid({products, showHeader = true}) {
   return (
     <div className="recommended-products">
-      <CollectionHeading
-        sectionName={'OUR BEST SELLERS'}
-        sectionHeading={'Shop our top picks'}
-        collectionHandle={products.handle}
-      />
+      {showHeader && (
+        <CollectionHeading
+          sectionName={'OUR BEST SELLERS'}
+          sectionHeading={'Shop our top picks'}
+          collectionHandle={products.handle}
+        />
+      )}
+
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {({products}) => (
