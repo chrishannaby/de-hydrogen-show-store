@@ -81,7 +81,6 @@ export async function loader({params, request, context}) {
     RECOMMENDED_PRODUCTS_QUERY,
   );
 
-  console.log(product);
   return defer({product, variants, recommendedProducts});
 }
 
@@ -149,7 +148,6 @@ function ProductImage({image}) {
     <div className="w-10/12">
       <Image
         alt={image.altText || 'Product Image'}
-        // aspectRatio="1/1"
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
@@ -472,7 +470,7 @@ const PRODUCT_FRAGMENT = `#graphql
     selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
       ...ProductVariant
     }
-    variants(first: 10) {
+    variants(first: 1) {
       nodes {
         ...ProductVariant
       }
