@@ -396,7 +396,7 @@ function CountDownTimer({startDateTime, endDateTime, content}) {
           : 'Product drops in:'}
       </h3>
       <div>
-        {timeLeft ? (
+        {Object.keys(timeLeft).length > 0 ? (
           <div>
             <span className="text-2xl">{timeLeft.days}</span>d{' '}
             <span className="text-2xl">{timeLeft.hours}</span>h{' '}
