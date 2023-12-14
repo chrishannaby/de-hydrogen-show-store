@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import {defer, redirect} from '@shopify/remix-oxygen';
 import {Await, Link, useLoaderData} from '@remix-run/react';
 import {CollectionProductGrid} from './_index';
@@ -51,6 +51,19 @@ export async function loader({params, request, context}) {
     throw new Response(null, {status: 404});
   }
 
+  console.log(product);
+
+  const dropMetaObject = product.drop
+    ? await storefront.query(METAOBJECT_QUERY, {
+        variables: {
+          id: product.drop.value,
+        },
+      })
+    : null;
+
+  console.log(dropMetaObject);
+
+  //dropMetaObject.metaobject.fields.find((field) => field.key === 'end_time'),
   const firstVariant = product.variants.nodes[0];
   const firstVariantIsDefault = Boolean(
     firstVariant.selectedOptions.find(
@@ -81,7 +94,7 @@ export async function loader({params, request, context}) {
     RECOMMENDED_PRODUCTS_QUERY,
   );
 
-  return defer({product, variants, recommendedProducts});
+  return defer({product, variants, recommendedProducts, dropMetaObject});
 }
 
 /**
@@ -109,7 +122,8 @@ function redirectToFirstVariant({product, request}) {
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product, variants, recommendedProducts} = useLoaderData();
+  const {product, variants, recommendedProducts, dropMetaObject} =
+    useLoaderData();
   const {selectedVariant} = product;
   const showHeader = false;
   return (
@@ -123,6 +137,7 @@ export default function Product() {
             selectedVariant={selectedVariant}
             product={product}
             variants={variants}
+            dropMetaObject={dropMetaObject}
           />
         </div>
       </div>
@@ -163,7 +178,7 @@ function ProductImage({image}) {
  *   variants: Promise<ProductVariantsQuery>;
  * }}
  */
-function ProductMain({selectedVariant, product, variants}) {
+function ProductMain({selectedVariant, product, variants, dropMetaObject}) {
   const {title, descriptionHtml} = product;
   return (
     <div className="">
@@ -184,6 +199,7 @@ function ProductMain({selectedVariant, product, variants}) {
             product={product}
             selectedVariant={selectedVariant}
             variants={[]}
+            dropMetaObject={dropMetaObject}
           />
         }
       >
@@ -196,6 +212,7 @@ function ProductMain({selectedVariant, product, variants}) {
               product={product}
               selectedVariant={selectedVariant}
               variants={data.product?.variants.nodes || []}
+              dropMetaObject={dropMetaObject}
             />
           )}
         </Await>
@@ -243,10 +260,27 @@ function ProductPrice({selectedVariant}) {
  *   variants: Array<ProductVariantFragment>;
  * }}
  */
-function ProductForm({product, selectedVariant, variants}) {
+function ProductForm({product, selectedVariant, variants, dropMetaObject}) {
+  let dropEndTime;
+  let dropStartTime;
+
+  let showCountDown = false;
+
+  console.log(product);
+  console.log(dropMetaObject);
+  if (dropMetaObject) {
+    dropStartTime = dropMetaObject.metaobject.fields.find(
+      (field) => field.key === 'start_time',
+    );
+    dropEndTime = dropMetaObject.metaobject.fields.find(
+      (field) => field.key === 'end_time',
+    );
+    showCountDown = new Date(dropStartTime.value) > new Date();
+  }
+
   return (
     <div className="product-form">
-      <div className="pb-4">
+      <div className="pb-4 space-y-6">
         <VariantSelector
           handle={product.handle}
           options={product.options}
@@ -256,25 +290,124 @@ function ProductForm({product, selectedVariant, variants}) {
         </VariantSelector>
       </div>
       <div className="pb-8">
-        <AddToCartButton
-          disabled={!selectedVariant || !selectedVariant.availableForSale}
-          onClick={() => {
-            window.location.href = window.location.href + '#cart-aside';
-          }}
-          lines={
-            selectedVariant
-              ? [
-                  {
-                    merchandiseId: selectedVariant.id,
-                    quantity: 1,
-                  },
-                ]
-              : []
-          }
-        >
-          {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-        </AddToCartButton>
+        {dropMetaObject ? (
+          <CountDownTimer
+            endDateTime={dropEndTime.value}
+            startDateTime={dropStartTime.value}
+            content={
+              <AddToCartButton
+                disabled={!selectedVariant || !selectedVariant.availableForSale}
+                onClick={() => {
+                  window.location.href = window.location.href + '#cart-aside';
+                }}
+                lines={
+                  selectedVariant
+                    ? [
+                        {
+                          merchandiseId: selectedVariant.id,
+                          quantity: 1,
+                        },
+                      ]
+                    : []
+                }
+              >
+                {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+              </AddToCartButton>
+            }
+          />
+        ) : (
+          <AddToCartButton
+            disabled={!selectedVariant || !selectedVariant.availableForSale}
+            onClick={() => {
+              window.location.href = window.location.href + '#cart-aside';
+            }}
+            lines={
+              selectedVariant
+                ? [
+                    {
+                      merchandiseId: selectedVariant.id,
+                      quantity: 1,
+                    },
+                  ]
+                : []
+            }
+          >
+            {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+          </AddToCartButton>
+        )}
       </div>
+    </div>
+  );
+}
+
+function CountDownTimer({startDateTime, endDateTime, content}) {
+  // Determine which date to count down to
+  let countDownTo = {date: '', type: ''};
+
+  countDownTo.date =
+    new Date() < new Date(startDateTime) ? startDateTime : endDateTime;
+
+  countDownTo.type =
+    new Date() < new Date(startDateTime) ? 'startDateTime' : 'endDateTime';
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(countDownTo));
+  const [showAddToCartButton, setShowAddToCartButton] = useState(false);
+
+  function calculateTimeLeft(date) {
+    const difference = +new Date(date) - +new Date();
+    let timeLeft = {};
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    }
+
+    return timeLeft;
+  }
+
+  // Recalculate time left every second
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const newTimeLeft = calculateTimeLeft(countDownTo.date);
+      setTimeLeft(newTimeLeft);
+
+      // If countdown is over, show the Add to Cart button
+      if (
+        !Object.keys(newTimeLeft).length ||
+        countDownTo.type === 'endDateTime'
+      ) {
+        setShowAddToCartButton(true);
+      }
+    }, 1000);
+
+    // Clear interval on re-render to avoid memory leaks
+    return () => clearTimeout(timer);
+  });
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-2xl text-darkGray font-light">
+        {countDownTo.type == 'endDateTime'
+          ? 'Product available until:'
+          : 'Product drops in:'}
+      </h3>
+      <div>
+        {timeLeft ? (
+          <div>
+            <span className="text-2xl">{timeLeft.days}</span>d{' '}
+            <span className="text-2xl">{timeLeft.hours}</span>h{' '}
+            <span className="text-2xl">{timeLeft.minutes}</span>m{' '}
+            <span className="text-2xl">{timeLeft.seconds}</span>s
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+      {showAddToCartButton && content}
     </div>
   );
 }
@@ -461,6 +594,10 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    drop: metafield(namespace: "product_drop", key: "drop") {
+      value
+      type
+    }
     descriptionHtml
     description
     options {
@@ -521,6 +658,19 @@ const VARIANTS_QUERY = `#graphql
   }
 `;
 
+const METAOBJECT_QUERY = `#graphql
+query MetaObject(
+  $id: ID
+){
+  metaobject(id: $id) {
+    id
+    fields {
+      value
+      key
+    }
+  }
+}
+`;
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   fragment RecommendedProduct on Product {
     id
