@@ -38,7 +38,7 @@ function HeaderLogo() {
       to="/"
       style={activeLinkStyle}
       end
-      className="flex items-center flex-col"
+      className="flex items-center flex-col no-underline"
     >
       <span>
         <svg
@@ -375,6 +375,7 @@ function activeLinkStyle({isActive, isPending}) {
   return {
     fontWeight: isActive ? 'bold' : undefined,
     color: isPending ? 'grey' : 'black',
+    textDecoration: 'none',
   };
 }
 

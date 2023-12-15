@@ -1362,6 +1362,7 @@ export type ProductFragment = Pick<
   StorefrontAPI.Product,
   'id' | 'title' | 'vendor' | 'handle' | 'descriptionHtml' | 'description'
 > & {
+  drop?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value' | 'type'>>;
   options: Array<Pick<StorefrontAPI.ProductOption, 'name' | 'values'>>;
   selectedVariant?: StorefrontAPI.Maybe<
     Pick<
@@ -1437,6 +1438,9 @@ export type ProductQuery = {
       StorefrontAPI.Product,
       'id' | 'title' | 'vendor' | 'handle' | 'descriptionHtml' | 'description'
     > & {
+      drop?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type'>
+      >;
       options: Array<Pick<StorefrontAPI.ProductOption, 'name' | 'values'>>;
       selectedVariant?: StorefrontAPI.Maybe<
         Pick<
@@ -1569,6 +1573,18 @@ export type ProductVariantsQuery = {
       >;
     };
   }>;
+};
+
+export type MetaObjectQueryVariables = StorefrontAPI.Exact<{
+  id?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['ID']['input']>;
+}>;
+
+export type MetaObjectQuery = {
+  metaobject?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metaobject, 'id'> & {
+      fields: Array<Pick<StorefrontAPI.MetaobjectField, 'value' | 'key'>>;
+    }
+  >;
 };
 
 export type RecommendedProductFragment = Pick<
@@ -1888,13 +1904,17 @@ interface GeneratedQueryTypes {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    hexValue: metafield(namespace: "custom", key: "hexvalue") {\n      value\n      type\n    }\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    drop: metafield(namespace: "product_drop", key: "drop") {\n      value\n      type\n    }\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    hexValue: metafield(namespace: "custom", key: "hexvalue") {\n      value\n      type\n    }\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };
   '#graphql\n  #graphql\n  fragment ProductVariants on Product {\n    variants(first: 250) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    hexValue: metafield(namespace: "custom", key: "hexvalue") {\n      value\n      type\n    }\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n  query ProductVariants(\n    $country: CountryCode\n    $language: LanguageCode\n    $handle: String!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...ProductVariants\n    }\n  }\n': {
     return: ProductVariantsQuery;
     variables: ProductVariantsQueryVariables;
+  };
+  '#graphql\nquery MetaObject(\n  $id: ID\n){\n  metaobject(id: $id) {\n    id\n    fields {\n      value\n      key\n    }\n  }\n}\n': {
+    return: MetaObjectQuery;
+    variables: MetaObjectQueryVariables;
   };
   '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    images(first: 1) {\n      nodes {\n        id\n        url\n        altText\n        width\n        height\n      }\n    }\n  }\n  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 4, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        ...RecommendedProduct\n      }\n    }\n  }\n': {
     return: RecommendedProductsQuery;

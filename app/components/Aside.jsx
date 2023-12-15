@@ -24,10 +24,12 @@ export function Aside({children, heading, id = 'aside'}) {
         }}
       />
       <aside>
-        <header>
-          <h3>{heading}</h3>
-          <CloseAside />
-        </header>
+        <div className="px-4 pb-8 pt-2 border-b-2">
+          <div className="flex items-end justify-end">
+            <CloseAside />
+          </div>
+          <h3 className="text-center text-2xl font-semibold">{heading}</h3>
+        </div>
         <main>{children}</main>
       </aside>
     </div>
@@ -37,7 +39,7 @@ export function Aside({children, heading, id = 'aside'}) {
 function CloseAside() {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-    <a className="close" href="#" onChange={() => history.go(-1)}>
+    <a className="close text-2xl text-gray-400" href="#" onChange={() => history.go(-1)}>
       &times;
     </a>
   );
