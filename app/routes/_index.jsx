@@ -15,37 +15,34 @@ export const meta = () => {
  */
 export async function loader({context}) {
   const {storefront} = context;
-  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY);
 
-  const featuredCollection = collections.nodes[0];
   const recommendedProducts = await storefront.query(
     COLLECTION_PRODUCTS_QUERY,
     {
       variables: {
         query: 'title:Bestsellers',
+        limit: 5,
       },
     },
   );
   const productList2 = await storefront.query(COLLECTION_PRODUCTS_QUERY, {
     variables: {
       query: 'title:Beauty',
+      limit: 2,
     },
   });
 
   const productList3 = await storefront.query(COLLECTION_PRODUCTS_QUERY, {
     variables: {
       query: 'title:Apparel',
+      limit: 2,
     },
   });
 
-  const heroImage = '/images/hero.png';
-
   return defer({
-    featuredCollection,
     recommendedProducts,
     productList2,
     productList3,
-    heroImage,
   });
 }
 
@@ -55,8 +52,7 @@ export default function Homepage() {
   return (
     <div className="home">
       <Hero heroImage={data.heroImage} />
-      {/* <FeaturedCollection collection={data.featuredCollection} /> */}
-      <div className="px-32 py-20">
+      <div className="page-width py-20">
         <CollectionProductGrid
           products={data.recommendedProducts.collections.edges[0].node}
         />
@@ -86,10 +82,14 @@ export default function Homepage() {
 /**
  *
  */
-function Hero({heroImage}) {
+function Hero() {
   return (
-    <div className="">
-      <img src={heroImage} alt="hero" className="w-full h-auto"></img>
+    <div className="max-h-[420px] overflow-hidden flex justify-center items-center">
+      <img
+        src="/images/hero.png"
+        alt="hero"
+        className="h-auto w-full object-cover object-center"
+      />
     </div>
   );
 }
@@ -97,7 +97,7 @@ function Hero({heroImage}) {
 function CollectionHeading({sectionName, sectionHeading, collectionHandle}) {
   return (
     <>
-      <h2 className="text-2xl font-bold uppercase">{sectionName}</h2>
+      <h2 className="text-3xl font-bold uppercase">{sectionName}</h2>
       <div>
         <Link
           className="flex items-center space-x-1"
@@ -182,7 +182,7 @@ function CollectionCTASection({collectionHandle}) {
   return (
     <div className="grid grid-cols-12 space-x-12 pt-16">
       <div className="col-span-4 space-y-2">
-        <h3 className="text-2xl font-bold uppercase">Electronics</h3>
+        <h3 className="text-3xl font-bold uppercase">Electronics</h3>
         <p className="text-sm font-light">
           Are you tired of running out of battery on the go? Anker offers a
           fantastic range of powerful and innovative portable power banks that
@@ -261,71 +261,17 @@ function CollectionProductGridWithImage({
   );
 }
 
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
-    }
-  }
-`;
-
-/* Remove if not used */
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
-    id
-    title
-    handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    images(first: 1) {
-      nodes {
-        id
-        url
-        altText
-        width
-        height
-      }
-    }
-  }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
-    }
-  }
-`;
-
 const COLLECTION_PRODUCTS_QUERY = `#graphql
 query COLLECTION(
   $query: String
+  $limit: Int
 ){
-  collections(first: 5,  query: $query) {
+  collections(first: 1,  query: $query) {
     edges {
       node {
         title
         handle
-        products(first: 8) {
+        products(first: $limit) {
           nodes {
                 id
                 title

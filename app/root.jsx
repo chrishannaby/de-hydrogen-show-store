@@ -66,7 +66,8 @@ export async function loader({context}) {
   const {storefront, session, cart} = context;
   const customerAccessToken = await session.get('customerAccessToken');
   const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
-  const message = 'Cyber Weekend is here: make the most of up to 50% off selected items. T&Cs apply.'
+  const message =
+    'Cyber Weekend is here: make the most of up to 50% off selected items. T&Cs apply.';
   const showMessageBar = true;
 
   // validate the customer access token is valid
