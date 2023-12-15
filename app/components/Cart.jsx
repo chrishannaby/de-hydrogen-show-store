@@ -71,7 +71,7 @@ function CartLineItem({layout, line}) {
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
 
   return (
-    <li key={id} className="cart-line">
+    <li key={id} className="relative cart-line border-b-2 py-6">
       {image && (
         <Image
           alt={title}
@@ -83,7 +83,7 @@ function CartLineItem({layout, line}) {
         />
       )}
 
-      <div>
+      <div className="grid justify-stretch">
         <Link
           prefetch="intent"
           to={lineItemUrl}
@@ -98,8 +98,7 @@ function CartLineItem({layout, line}) {
             <strong>{product.title}</strong>
           </p>
         </Link>
-        <CartLinePrice line={line} as="span" />
-        <ul>
+        <ul className="hidden">
           {selectedOptions.map((option) => (
             <li key={option.name}>
               <small>
@@ -122,7 +121,11 @@ function CartCheckoutActions({checkoutUrl}) {
 
   return (
     <div>
-      <a href={checkoutUrl} target="_self">
+      <a
+        href={checkoutUrl}
+        target="_self"
+        className="bg-green-200 block w-full p-4 text-center"
+      >
         <p>Continue to Checkout &rarr;</p>
       </a>
       <br />
@@ -139,14 +142,13 @@ function CartCheckoutActions({checkoutUrl}) {
  */
 export function CartSummary({cost, layout, children = null}) {
   const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
+    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside space-y-4';
 
   return (
     <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
+      <dl className="cart-subtotal flex justify-between">
+        <dt className=''>Subtotal</dt>
+        <dd className='font-semibold'>
           {cost?.subtotalAmount?.amount ? (
             <Money data={cost?.subtotalAmount} />
           ) : (
@@ -184,30 +186,45 @@ function CartLineQuantity({line}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantiy">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
+    <div className=" cart-line-quantity flex justify-between items-center">
+      <div className=" flex ">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <button
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1}
+            name="decrease-quantity"
+            className="bg-gray-400 p-1 h-full w-8 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+            value={prevQuantity}
+          >
+            <span>&#8722; </span>
+          </button>
+        </CartLineUpdateButton>
+        <input
+          id="number"
+          type="number"
+          value={quantity}
+          disabled="disabled"
+          className="w-16 h-full text-center"
+        />
+        {/* <div>{quantity}</div> */}
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <button
+            aria-label="Increase quantity"
+            name="increase-quantity"
+            value={nextQuantity}
+            className="bg-gray-400 p-1 h-full w-8 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span>&#43;</span>
+          </button>
+        </CartLineUpdateButton>
+      </div>
       &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineRemoveButton lineIds={[lineId]} />
+      <div className="absolute top-0 right-0">
+        <CartLineRemoveButton lineIds={[lineId]} />
+      </div>
+      <div>
+        <CartLinePrice line={line} as="span" />
+      </div>
     </div>
   );
 }
@@ -296,10 +313,15 @@ function CartDiscounts({discountCodes}) {
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
+        <div className="flex justify-between">
           <input type="text" name="discountCode" placeholder="Discount code" />
           &nbsp;
-          <button type="submit">Apply</button>
+          <button
+            type="submit"
+            className="rounded bg-darkGray px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+          >
+            Apply
+          </button>
         </div>
       </UpdateDiscountForm>
     </div>
