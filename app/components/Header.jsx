@@ -1,4 +1,4 @@
-import {Await, NavLink} from '@remix-run/react';
+import {Await, NavLink, Link} from '@remix-run/react';
 import {Suspense} from 'react';
 import {useRootLoaderData} from '~/root';
 import {Bars3Icon} from '@heroicons/react/20/solid';
@@ -14,7 +14,7 @@ export function Header({header, isLoggedIn, cart}) {
         <HeaderMenuMobileToggle />
       </div>
 
-      <div className="flex-1 flex items-start">
+      <div className="flex-1 flex justify-center md:justify-start">
         <HeaderLogo />
       </div>
       <div className="hidden md:block">
@@ -33,12 +33,11 @@ export function Header({header, isLoggedIn, cart}) {
 
 function HeaderLogo() {
   return (
-    <NavLink
+    <Link
       prefetch="intent"
       to="/"
-      style={activeLinkStyle}
       end
-      className="flex items-center flex-col no-underline"
+      className="flex items-center flex-col hover:no-underline"
     >
       <span>
         <svg
@@ -93,7 +92,7 @@ function HeaderLogo() {
           />
         </svg>
         <div className="flex items-center justify-center space-x-1">
-          <p className="text-xs">Powered By</p>
+          <p className="text-xs ">Powered By</p>
           <span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +145,7 @@ function HeaderLogo() {
           </span>
         </div>
       </span>
-    </NavLink>
+    </Link>
   );
 }
 
