@@ -91,7 +91,7 @@ function MessageBar({showMessageBar, message}) {
   }
 
   return (
-    <div className="bg-darkGray text-white p-4 text-center">
+    <div className="bg-darkGray text-sm text-white pt-2 pb-3 text-center">
       {message}{' '}
       <a href="#" className="underline">
         Shop now

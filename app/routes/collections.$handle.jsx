@@ -46,8 +46,8 @@ export default function Collection() {
   const {collection} = useLoaderData();
 
   return (
-    <div className="collection">
-      <h1>{collection.title}</h1>
+    <div className="collections page-width pt-4 pb-16">
+      <h1 className="mb-12 text-3xl font-bold">{collection.title}</h1>
       <p className="collection-description">{collection.description}</p>
       <Pagination connection={collection.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (

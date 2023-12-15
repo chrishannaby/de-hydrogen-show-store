@@ -113,7 +113,7 @@ export default function Product() {
   const {selectedVariant} = product;
   const showHeader = false;
   return (
-    <div className="px-32 pb-16">
+    <div className="page-width pt-12 pb-16">
       <div className="grid grid-cols-12  gap-x-16">
         <div className="col-span-8">
           <ProductImage image={selectedVariant?.image} />
@@ -282,7 +282,7 @@ function ProductForm({product, selectedVariant, variants}) {
 function ProductReviews({review}) {
   return (
     <div>
-      <div className="flex items-center xl:col-span-1">
+      <div className="flex items-center md:col-span-1">
         <div className="flex items-center">
           <svg
             className="text-yellow-400 h-3 w-3 flex-shrink-0"

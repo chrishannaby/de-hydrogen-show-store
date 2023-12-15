@@ -22,8 +22,8 @@ export default function Collections() {
   const {collections} = useLoaderData();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
+    <div className="collections page-width pt-4 pb-16">
+      <h1 className="mb-12 text-3xl font-bold">Collections</h1>
       <Pagination connection={collections}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
