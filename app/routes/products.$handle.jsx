@@ -51,7 +51,6 @@ export async function loader({params, request, context}) {
     throw new Response(null, {status: 404});
   }
 
-  console.log(product);
 
   const dropMetaObject = product.drop
     ? await storefront.query(METAOBJECT_QUERY, {
@@ -61,7 +60,6 @@ export async function loader({params, request, context}) {
       })
     : null;
 
-  console.log(dropMetaObject);
 
   //dropMetaObject.metaobject.fields.find((field) => field.key === 'end_time'),
   const firstVariant = product.variants.nodes[0];
@@ -264,10 +262,7 @@ function ProductForm({product, selectedVariant, variants, dropMetaObject}) {
   let dropEndTime;
   let dropStartTime;
 
-  let showCountDown = false;
 
-  console.log(product);
-  console.log(dropMetaObject);
   if (dropMetaObject) {
     dropStartTime = dropMetaObject.metaobject.fields.find(
       (field) => field.key === 'start_time',
@@ -275,7 +270,6 @@ function ProductForm({product, selectedVariant, variants, dropMetaObject}) {
     dropEndTime = dropMetaObject.metaobject.fields.find(
       (field) => field.key === 'end_time',
     );
-    showCountDown = new Date(dropStartTime.value) > new Date();
   }
 
   return (

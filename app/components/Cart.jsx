@@ -71,7 +71,7 @@ function CartLineItem({layout, line}) {
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
 
   return (
-    <li key={id} className="relative cart-line border-b-2 py-6">
+    <li key={id} className="relative cart-line border-b-2 py-8 my-2">
       {image && (
         <Image
           alt={title}
@@ -83,7 +83,7 @@ function CartLineItem({layout, line}) {
         />
       )}
 
-      <div className="grid justify-stretch">
+      <div className="grid justify-stretch w-full">
         <Link
           prefetch="intent"
           to={lineItemUrl}
@@ -171,7 +171,7 @@ function CartLineRemoveButton({lineIds}) {
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button type="submit">Remove</button>
+      <button type="submit" className='w-6 h-6 text-white bg-red-700 rounded-full'>-</button>
     </CartForm>
   );
 }
