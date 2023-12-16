@@ -143,18 +143,22 @@ export function CollectionProductGrid({products, showHeader = true}) {
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={products}>
           {({products}) => (
-            <div className="recommended-products-grid py-6">
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-5 py-6">
               {products.nodes.map((product) => (
                 <Link
                   key={product.id}
-                  className="recommended-product"
+                  className="recommended-product "
                   to={`/products/${product.handle}`}
                 >
-                  <Image
-                    data={product.images.nodes[0]}
-                    aspectRatio="1/1"
-                    sizes="(min-width: 45em) 20vw, 50vw"
-                  />
+                  <div className="overflow-hidden ">
+                    <Image
+                      data={product.images.nodes[0]}
+                      className="hover:scale-110 transition-all duration-500"
+                      aspectRatio="1/1"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                  </div>
+
                   <h3 className="font-semibold text-lg pt-4">
                     {product.vendor}
                   </h3>
@@ -233,14 +237,18 @@ function CollectionProductGridWithImage({
                 {products.nodes.map((product) => (
                   <Link
                     key={product.id}
-                    className="recommended-product"
+                    className="recommended-product "
                     to={`/products/${product.handle}`}
                   >
-                    <Image
-                      data={product.images.nodes[0]}
-                      aspectRatio="1/1"
-                      sizes="(min-width: 45em) 20vw, 50vw"
-                    />
+                    <div className="overflow-hidden">
+                      <Image
+                        data={product.images.nodes[0]}
+                        aspectRatio="1/1"
+                        class="hover:scale-105 transition-all duration-500 overflow-hidden"
+                        sizes="(min-width: 45em) 20vw, 50vw"
+                      />
+                    </div>
+
                     <h3 className="font-semibold text-lg pt-4">
                       {product.vendor}
                     </h3>

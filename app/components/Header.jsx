@@ -9,25 +9,27 @@ import {Bars3Icon} from '@heroicons/react/20/solid';
 export function Header({header, isLoggedIn, cart}) {
   const {shop, menu} = header;
   return (
-    <header className="page-width w-full flex py-5 items-center">
-      <div className="flex-1 block md:hidden">
-        <HeaderMenuMobileToggle />
-      </div>
+    <div className="border-b-2 border-gray-100">
+      <header className="page-width w-full flex py-5 items-center ">
+        <div className="flex-1 block md:hidden">
+          <HeaderMenuMobileToggle />
+        </div>
 
-      <div className="flex-1 flex justify-center md:justify-start">
-        <HeaderLogo />
-      </div>
-      <div className="hidden md:block">
-        <HeaderMenu
-          menu={menu}
-          viewport="desktop"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-        />
-      </div>
-      <div className="flex-1">
-        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
-      </div>
-    </header>
+        <div className="flex-1 flex justify-center md:justify-start">
+          <HeaderLogo />
+        </div>
+        <div className="hidden md:block">
+          <HeaderMenu
+            menu={menu}
+            viewport="desktop"
+            primaryDomainUrl={header.shop.primaryDomain.url}
+          />
+        </div>
+        <div className="flex-1">
+          <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+        </div>
+      </header>
+    </div>
   );
 }
 
