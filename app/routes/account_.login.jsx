@@ -73,33 +73,43 @@ export default function Login() {
   const error = data?.error || null;
 
   return (
-    <div className="login">
-      <h1>Sign in.</h1>
+    <div className="pt-12 flex flex-col gap-8 max-w-[420px] mx-auto px-5">
+      <h1 className="text-2xl font-semibold">Log in</h1>
       <Form method="POST">
-        <fieldset>
-          <label htmlFor="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="Email address"
-            aria-label="Email address"
-            // eslint-disable-next-line jsx-a11y/no-autofocus
-            autoFocus
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="Password"
-            aria-label="Password"
-            minLength={8}
-            required
-          />
+        <fieldset className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-gray-600" htmlFor="email">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              placeholder="Email address"
+              aria-label="Email address"
+              className="block w-full rounded-md border-0 py-3 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-gray-600" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Password"
+              aria-label="Password"
+              className="block w-full rounded-md border-0 py-3 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+              minLength={8}
+              required
+            />
+          </div>
         </fieldset>
         {error ? (
           <p>
@@ -110,16 +120,16 @@ export default function Login() {
         ) : (
           <br />
         )}
-        <button type="submit">Sign in</button>
+        <button
+          className="block w-full bg-gray-900 rounded-md border-0 py-3 pl-5 pr-6 text-white ring-1 ring-inset  focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+          type="submit"
+        >
+          Sign in
+        </button>
       </Form>
-      <br />
-      <div>
-        <p>
-          <Link to="/account/recover">Forgot password →</Link>
-        </p>
-        <p>
-          <Link to="/account/register">Register →</Link>
-        </p>
+      <div className="flex justify-between text-sm text-gray-500">
+        <Link to="/account/recover">Forgot password →</Link>
+        <Link to="/account/register">Register →</Link>
       </div>
     </div>
   );
