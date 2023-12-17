@@ -12,6 +12,7 @@ import {
   getStorefrontHeaders,
   createCookieSessionStorage,
 } from '@shopify/remix-oxygen';
+import {createSanityClient} from 'hydrogen-sanity';
 
 /**
  * Export a fetch handler in module format.
@@ -31,10 +32,28 @@ export default {
         throw new Error('SESSION_SECRET environment variable is not set');
       }
 
+      const secrets = [env.SESSION_SECRET];
+
       const waitUntil = executionContext.waitUntil.bind(executionContext);
       const [cache, session] = await Promise.all([
         caches.open('hydrogen'),
         HydrogenSession.init(request, [env.SESSION_SECRET]),
+        (async function createPreviewSession() {
+          const storage = createCookieSessionStorage({
+            cookie: {
+              name: '__preview',
+              httpOnly: true,
+              sameSite: true,
+              secrets,
+            },
+          });
+
+          const session = await storage.getSession(
+            request.headers.get('Cookie'),
+          );
+
+          return new HydrogenSession(storage, session);
+        })(),
       ]);
 
       /**
@@ -49,6 +68,24 @@ export default {
         storeDomain: env.PUBLIC_STORE_DOMAIN,
         storefrontId: env.PUBLIC_STOREFRONT_ID,
         storefrontHeaders: getStorefrontHeaders(request),
+      });
+
+      const sanity = createSanityClient({
+        cache,
+        waitUntil,
+        preview:
+          env.SANITY_PREVIEW_SECRET && env.SANITY_API_TOKEN
+            ? {
+                session: previewSession,
+                token: env.SANITY_API_TOKEN,
+              }
+            : undefined,
+        config: {
+          projectId: env.SANITY_PROJECT_ID,
+          dataset: env.SANITY_DATASET,
+          apiVersion: env.SANITY_API_VERSION ?? '2023-03-30',
+          useCdn: process.env.NODE_ENV === 'production',
+        },
       });
 
       /*
@@ -69,7 +106,14 @@ export default {
       const handleRequest = createRequestHandler({
         build: remixBuild,
         mode: process.env.NODE_ENV,
-        getLoadContext: () => ({session, storefront, cart, env, waitUntil}),
+        getLoadContext: () => ({
+          session,
+          storefront,
+          cart,
+          env,
+          waitUntil,
+          sanity,
+        }),
       });
 
       const response = await handleRequest(request);
