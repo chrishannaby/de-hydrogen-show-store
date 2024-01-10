@@ -1257,6 +1257,18 @@ export type StoreCollectionsQuery = {
   };
 };
 
+export type MetaobjectQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.MetaobjectHandleInput;
+}>;
+
+export type MetaobjectQuery = {
+  metaobject?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metaobject, 'id'> & {
+      name?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MetaobjectField, 'value'>>;
+    }
+  >;
+};
+
 export type PageQueryVariables = StorefrontAPI.Exact<{
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
@@ -1332,6 +1344,52 @@ export type PoliciesQuery = {
       Pick<StorefrontAPI.ShopPolicyWithDefault, 'id' | 'title' | 'handle'>
     >;
   };
+};
+
+export type DrawMetaobjectQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.MetaobjectHandleInput;
+}>;
+
+export type DrawMetaobjectQuery = {
+  metaobject?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metaobject, 'id'> & {
+      name?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MetaobjectField, 'value'>>;
+      start_time?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.MetaobjectField, 'value'>
+      >;
+      product?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.MetaobjectField, 'value'>
+      >;
+      numberAvailable?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.MetaobjectField, 'value'>
+      >;
+    }
+  >;
+};
+
+export type GetProductByIdQueryVariables = StorefrontAPI.Exact<{
+  id: StorefrontAPI.Scalars['ID']['input'];
+}>;
+
+export type GetProductByIdQuery = {
+  product?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title'> & {
+      featuredImage?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+      >;
+      priceRange: {
+        minVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+      };
+      variants: {
+        nodes: Array<{
+          selectedOptions: Array<
+            Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
+          >;
+        }>;
+      };
+    }
+  >;
 };
 
 export type ProductVariantFragment = Pick<
@@ -1892,6 +1950,10 @@ interface GeneratedQueryTypes {
     return: StoreCollectionsQuery;
     variables: StoreCollectionsQueryVariables;
   };
+  '#graphql\n  query Metaobject(\n    $handle: MetaobjectHandleInput!\n  ) {\n    metaobject(handle: $handle) {\n      id\n      name: field(key: "name") {\n        value\n      }\n    }\n  }\n': {
+    return: MetaobjectQuery;
+    variables: MetaobjectQueryVariables;
+  };
   '#graphql\n  query Page(\n    $language: LanguageCode,\n    $country: CountryCode,\n    $handle: String!\n  )\n  @inContext(language: $language, country: $country) {\n    page(handle: $handle) {\n      id\n      title\n      body\n      seo {\n        description\n        title\n      }\n    }\n  }\n': {
     return: PageQuery;
     variables: PageQueryVariables;
@@ -1903,6 +1965,14 @@ interface GeneratedQueryTypes {
   '#graphql\n  fragment PolicyItem on ShopPolicy {\n    id\n    title\n    handle\n  }\n  query Policies ($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    shop {\n      privacyPolicy {\n        ...PolicyItem\n      }\n      shippingPolicy {\n        ...PolicyItem\n      }\n      termsOfService {\n        ...PolicyItem\n      }\n      refundPolicy {\n        ...PolicyItem\n      }\n      subscriptionPolicy {\n        id\n        title\n        handle\n      }\n    }\n  }\n': {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
+  };
+  '#graphql\n  query DrawMetaobject(\n    $handle: MetaobjectHandleInput!\n  ) {\n    metaobject(handle: $handle) {\n      id\n      name: field(key: "name") {\n        value\n      }\n      start_time: field(key: "start_time") {\n        value\n      }\n      product: field(key: "product") {\n        value\n      }\n      numberAvailable: field(key: "number_available") {\n        value\n      }\n    }\n  }\n': {
+    return: DrawMetaobjectQuery;
+    variables: DrawMetaobjectQueryVariables;
+  };
+  '#graphql\n  query getProductById($id: ID!) {\n    product(id: $id) {\n      ...ProductItem\n    }\n  }\n  #graphql\n  fragment MoneyProductItem on MoneyV2 {\n    amount\n    currencyCode\n  }\n  fragment ProductItem on Product {\n    id\n    handle\n    title\n    featuredImage {\n      id\n      altText\n      url\n      width\n      height\n    }\n    priceRange {\n      minVariantPrice {\n        ...MoneyProductItem\n      }\n      maxVariantPrice {\n        ...MoneyProductItem\n      }\n    }\n    variants(first: 1) {\n      nodes {\n        selectedOptions {\n          name\n          value\n        }\n      }\n    }\n  }\n\n': {
+    return: GetProductByIdQuery;
+    variables: GetProductByIdQueryVariables;
   };
   '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    drop: metafield(namespace: "product_drop", key: "drop") {\n      value\n      type\n    }\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    hexValue: metafield(namespace: "custom", key: "hexvalue") {\n      value\n      type\n    }\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
     return: ProductQuery;

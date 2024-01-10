@@ -38,7 +38,6 @@ function HeaderLogo() {
     <Link
       prefetch="intent"
       to="/"
-      end
       className="flex items-center flex-col hover:no-underline"
     >
       <span>

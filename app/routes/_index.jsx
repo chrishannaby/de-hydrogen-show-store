@@ -244,7 +244,7 @@ function CollectionProductGridWithImage({
                       <Image
                         data={product.images.nodes[0]}
                         aspectRatio="1/1"
-                        class="hover:scale-105 transition-all duration-500 overflow-hidden"
+                        className="hover:scale-105 transition-all duration-500 overflow-hidden"
                         sizes="(min-width: 45em) 20vw, 50vw"
                       />
                     </div>
