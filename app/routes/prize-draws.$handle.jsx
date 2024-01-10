@@ -33,16 +33,13 @@ export async function action({request, context}) {
       throw new Error('Please provide both an email and an access code.');
     }
 
-    await fetch(
-      'https://nrf-webhooks.chrishannaby-store-a.com/registerForDraw',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({drawId: id, email, secret: accessCode}),
+    await fetch(`${process.env.WEBHOOKS_URL}/registerForDraw`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({drawId: id, email, secret: accessCode}),
+    });
     const data = {status: 'success'};
 
     return json(data);
