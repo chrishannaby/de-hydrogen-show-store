@@ -33,7 +33,7 @@ export async function action({request, context}) {
       throw new Error('Please provide both an email and an access code.');
     }
 
-    await fetch(`${process.env.WEBHOOKS_URL}/registerForDraw`, {
+    await fetch(`${context.env.WEBHOOKS_URL}/registerForDraw`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ function Hero({title, startsAt, id, accessCode}) {
           <p className="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
             Draw starts at {date}
           </p>
-          {!success ? (
+          {accessCode && !success ? (
             <fetcher.Form
               method="post"
               className="mx-auto mt-10 flex max-w-md gap-x-4"
@@ -160,9 +160,11 @@ function Hero({title, startsAt, id, accessCode}) {
               </button>
             </fetcher.Form>
           ) : (
-            <p className="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
-              You've registered!
-            </p>
+            accessCode && (
+              <p className="mx-auto mt-2 max-w-xl text-center text-lg leading-8 text-gray-300">
+                You've registered!
+              </p>
+            )
           )}
           <svg
             viewBox="0 0 1024 1024"
